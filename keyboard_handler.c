@@ -1,4 +1,4 @@
-/*
+/*came
  * Independent keyboard hadler
  *
  * Raw mode source code:
@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #define EXIT_POINT 27 // ESC key
 
@@ -42,11 +43,13 @@ void enableRawMode()
  */
 //possible declaration
 //void keyboard_handler(int* buffer, int* current_buffer_position, void(*f)(void) launcher_on_keypress)
-void keyboard_handler()
+// Circular buffer?????????????
+void keyboard_handler(bool CANCELLATION_SIGNAL)
 {
     char c;
     enableRawMode();
-    while(read(STDIN_FILENO, &c, 1) && c != EXIT_POINT)
+    // TODO: ERROR? if waiting for input and then CANCELLATION_SIGNAL is called it wouldn exit until read refreshes
+    while(read(STDIN_FILENO, &c, 1) && c != EXIT_POINT &&! CANCELLATION_SIGNAL)
     {
         // TODO
     }
@@ -54,4 +57,21 @@ void keyboard_handler()
 }
 
 
+/**
+ * input_string
+ * FILE* IN_STREAM: STDIN or custom input stream file
+ * char* OUT_STR: string where input will be copied
+ * int MAX_LEN: maximum length of OUT_STR
+ *
+ * Return:
+ *  false (0): success
+ *  true  (1): error
+ *
+ * ! Entry in cooked mode and dont come back raw
+ */
+bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN)
+{
+    disableRawMode();
+    return fgets(OUT_STR, MAX_LEN, IN_STREAM) == NULL;
+}
 
