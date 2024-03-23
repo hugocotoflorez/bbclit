@@ -4,10 +4,11 @@
  */
 
 #include "bbclit.h"
+#include <stdlib.h>
 
 int main(int argc, char** arcv)
 {
-    CUSTOMIZE_SETTINGS settings = DEFAULT_CUSTOMIZE_SETTINGS();
+    DIMENSION size = fullscreen();
+    BOX main_box = new_box(NULL, size);
     return 0;
 }
-

@@ -7,9 +7,9 @@
     }
 
 
-CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS()
+struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS()
 {
-    CUSTOMIZE_SETTINGS default_settings;
+    struct CUSTOMIZE_SETTINGS default_settings;
     // corners
     ASSIGN(default_settings.corner.top_left, "┏");
     ASSIGN(default_settings.corner.top_right, "┓");
