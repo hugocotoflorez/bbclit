@@ -2,8 +2,10 @@
 #define BCLI_H
 
 
-// %2d;%2d;%2d where each %d can be color or style format
-#define COLOR_FORMAT(a) char a[8]
+// \e[0;%2d;%2d;%2dm where each %d can be color or style format
+#define COLOR_FORMAT(a) char a[13]
+
+#define LARGE_CHAR(a) char a[2]
 
 /**
  * Dimensions
@@ -28,17 +30,25 @@ typedef struct __BOX
 
 struct CORNER
 {
-    char top_left, top_right, bottom_left, bottom_right;
+    LARGE_CHAR(top_left);
+    LARGE_CHAR(top_right);
+    LARGE_CHAR(bottom_left);
+    LARGE_CHAR(bottom_right);
 };
 
 struct BORDER
 {
-    char vertical, horizontal;
+    LARGE_CHAR(vertical);
+    LARGE_CHAR(horizontal);
 };
 
 struct INTERSECTION
 {
-    char vertical_up, vertical_down, horizontal_right, horizontal_left, full_intersection;
+    LARGE_CHAR(vertical_right);
+    LARGE_CHAR(vertical_left);
+    LARGE_CHAR(horizontal_up);
+    LARGE_CHAR(horizontal_down);
+    LARGE_CHAR(full_intersection);
 };
 
 struct COLOR
@@ -60,7 +70,7 @@ typedef struct __CUSTOMIZE_SETTINGS
 } CUSTOMIZE_SETTINGS;
 
 
-extern CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS();
+CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS();
 
 
 #endif // !BCLI_H
