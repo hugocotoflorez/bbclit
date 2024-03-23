@@ -15,7 +15,7 @@
 
 # Installation and usage
 Clone repository:
-```shell 
+```shell
 git clone --depth 1 https://github.com/hugocotoflorez/bbclit <Download Path>
 ```
 From your c script
@@ -23,14 +23,16 @@ From your c script
 #include "<Download Path>/bbclit.h"
 ```
 To compile:
+There are a makefile that compiles main.c
 ```shell
-gcc ... -L<Download Path> -lbbclit
+make
+make clean
 ```
 
 # Description
-This tool allow developers to create interfaces organized by boxes. Elements inside boxes are fixed relatively to 
+This tool allow developers to create interfaces organized by boxes. Elements inside boxes are fixed relatively to
 their parent box, so it is easy to move layout and configure boxes and elements. The library include some templates
-to start with. 
+to start with.
 
 # Authors and contributors
 
