@@ -50,4 +50,8 @@ void keyboard_handler()
     {
         // TODO
     }
+    disableRawMode();
 }
+
+
+
