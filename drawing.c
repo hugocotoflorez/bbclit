@@ -5,6 +5,24 @@
 #include <wchar.h>
 
 
+void cursor_goto(int x, int y)
+{
+    wprintf(L"\e[%d;%dH", y, x);
+}
+
+
+void __DEBUG_print_charId_matix(struct SCREEN *screen, DIMENSION global_size)
+{
+    cursor_goto(1, 1);
+    for(int j = 0; j < global_size.y1; j++)
+    {
+        for(int i = 0; i < global_size.x1; i++)
+            wprintf(L"%d", screen->screen_arr[i * (screen->size.y1 - 1) + j]);
+    }
+    fflush(OUT_STREAM);
+}
+
+
 void enable_wide_mode()
 {
     setlocale(LC_ALL, "");
@@ -15,12 +33,6 @@ void enable_wide_mode()
 void clear_screen()
 {
     wprintf(L"\e[2J");
-}
-
-
-void cursor_goto(int x, int y)
-{
-    wprintf(L"\e[%d;%dH", y, x);
 }
 
 
@@ -140,21 +152,22 @@ void draw_raw_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, str
     putwchar(settings.corner.top_left);
     {
         // TODO: RESTARLE 1 a todo
-        screen->screen_arr[(global_size.x0-1) * (screen->size.y1 - 1) + global_size.y0-1] =
+        screen
+        ->screen_arr[(global_size.x0 - 1) * (screen->size.y1 - 1) + global_size.y0 - 1] =
         get_character_id(settings, settings.corner.top_left);
     }
     for(p = global_size.x0 + 1; p < global_size.x1; p++)
     {
         putwchar(settings.border.horizontal);
         {
-            screen->screen_arr[(global_size.x0 + p) * (screen->size.y1 - 1) +
-            global_size.y0] = get_character_id(settings, settings.corner.top_left);
+            screen->screen_arr[(global_size.x0 + p - 1) * (screen->size.y1 - 1) +
+            global_size.y0 - 1] = get_character_id(settings, settings.corner.top_left);
         }
     }
     putwchar(settings.corner.top_right);
     {
         screen
-        ->screen_arr[(global_size.x1) * (screen->size.y1 - 1) + global_size.y0] =
+        ->screen_arr[(global_size.x1 - 1) * (screen->size.y1 - 1) + global_size.y0 - 1] =
         get_character_id(settings, settings.corner.top_left);
     }
     for(p = global_size.y0 + 1; p < global_size.y1; p++)
@@ -162,13 +175,13 @@ void draw_raw_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, str
         cursor_goto(global_size.x0, p);
         putwchar(settings.border.vertical);
         {
-            screen->screen_arr[(global_size.x0) * (screen->size.y1 - 1) + p] =
+            screen->screen_arr[(global_size.x0 - 1) * (screen->size.y1 - 1) + p - 1] =
             get_character_id(settings, settings.corner.top_left);
         }
         cursor_goto(global_size.x1, p);
         putwchar(settings.border.vertical);
         {
-            screen->screen_arr[(global_size.x1) * (screen->size.y1 - 1) + p] =
+            screen->screen_arr[(global_size.x1 - 1) * (screen->size.y1 - 1) + p - 1] =
             get_character_id(settings, settings.corner.top_left);
         }
     }
@@ -176,29 +189,27 @@ void draw_raw_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, str
     putwchar(settings.corner.bottom_left);
     {
         screen
-        ->screen_arr[(global_size.x0) * (screen->size.y1 - 1) + global_size.y1] =
+        ->screen_arr[(global_size.x0 - 1) * (screen->size.y1 - 1) + global_size.y1 - 1] =
         get_character_id(settings, settings.corner.top_left);
     }
     for(p = global_size.x0 + 1; p < global_size.x1; p++)
     {
         putwchar(settings.border.horizontal);
         {
-            screen->screen_arr[(global_size.x0 + p) * (screen->size.y1 - 1) +
-            global_size.y1] = get_character_id(settings, settings.corner.top_left);
+            screen->screen_arr[(global_size.x0 + p - 1) * (screen->size.y1 - 1) +
+            global_size.y1 - 1] = get_character_id(settings, settings.corner.top_left);
         }
     }
     putwchar(settings.corner.bottom_right);
     {
         screen
-        ->screen_arr[(global_size.x1) * (screen->size.y1 - 1) + global_size.y1] =
+        ->screen_arr[(global_size.x1 - 1) * (screen->size.y1 - 1) + global_size.y1 - 1] =
         get_character_id(settings, settings.corner.top_left);
     }
     fflush(OUT_STREAM);
-    cursor_goto(1, 1);
-    for(int i = 0; i < global_size.x1; i++)
-        for(int j = 0; j < global_size.y1; j++)
-            wprintf(L"%d", screen->screen_arr[j * (screen->size.y1 - 1) + i]);
+    __DEBUG_print_charId_matix(screen, global_size);
 }
+
 
 
 void draw_child_box()
