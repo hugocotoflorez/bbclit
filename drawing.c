@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <wchar.h>
 
-#define IN_STREAM stdin
-#define OUT_STREAM stdout
 
 
 void enable_wide_mode()

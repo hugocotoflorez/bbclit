@@ -3,7 +3,10 @@
 
 #include <wchar.h>
 #include <stdbool.h>
+#include <stdio.h>
 // .......... DEFINES
+#define IN_STREAM stdin
+#define OUT_STREAM stdout
 
 // \e[0;%2d;%2d;%2dm where each %d can be color or style format
 #define COLOR_FORMAT(a) char a[13]
@@ -13,25 +16,25 @@
 
 struct CORNER
 {
-    const wchar_t top_left;
-    const wchar_t top_right;
-    const wchar_t bottom_left;
-    const wchar_t bottom_right;
+    wchar_t top_left;
+    wchar_t top_right;
+    wchar_t bottom_left;
+    wchar_t bottom_right;
 };
 
 struct BORDER
 {
-    const wchar_t vertical;
-    const wchar_t horizontal;
+    wchar_t vertical;
+    wchar_t horizontal;
 };
 
 struct INTERSECTION
 {
-    const wchar_t vertical_right;
-    const wchar_t vertical_left;
-    const wchar_t horizontal_up;
-    const wchar_t horizontal_down;
-    const wchar_t full_intersection;
+    wchar_t vertical_right;
+    wchar_t vertical_left;
+    wchar_t horizontal_up;
+    wchar_t horizontal_down;
+    wchar_t full_intersection;
 };
 
 struct COLOR
