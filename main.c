@@ -13,13 +13,15 @@
 int main(int argc, char** arcv)
 {
     // clear_screen();
+    struct SCREEN screen = initialize_screen();
     DIMENSION size = fullscreen();
-    // DIMENSION size = {5,10,5,10};
     enable_wide_mode();
     BOX main_box = new_box(NULL, size);
-    draw_box(&main_box);
+    draw_box(&main_box, &screen);
     bool i = false;
     keyboard_handler(i);
+    free(screen.screen_arr);
+
 
     return 0;
 }

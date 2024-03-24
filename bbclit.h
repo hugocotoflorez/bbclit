@@ -1,16 +1,15 @@
 #ifndef BCLI_H
 #define BCLI_H
 
-#include <wchar.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <wchar.h>
 // .......... DEFINES
 #define IN_STREAM stdin
 #define OUT_STREAM stdout
 
 // \e[0;%2d;%2d;%2dm where each %d can be color or style format
 #define COLOR_FORMAT(a) char a[13]
-
 
 // .......... CUSTOMIZE SETTINGS
 
@@ -77,13 +76,21 @@ typedef struct __BOX
 } BOX;
 
 
+// .......... SCREEN MATRIX
+struct SCREEN
+{
+    DIMENSION size;
+    short* screen_arr;
+};
+
 // FUNCTIONS
 
 extern struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS();
 extern BOX new_box(BOX* parent, DIMENSION size);
 extern DIMENSION fullscreen();
-extern void draw_box(BOX* self_box);
+extern void draw_box(BOX* self_box, struct SCREEN* screen);
 extern void clear_screen();
 extern void keyboard_handler(bool CANCELLATION_SIGNAL);
 extern void enable_wide_mode();
+extern struct SCREEN initialize_screen();
 #endif // !BCLI_H

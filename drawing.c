@@ -5,7 +5,6 @@
 #include <wchar.h>
 
 
-
 void enable_wide_mode()
 {
     setlocale(LC_ALL, "");
@@ -36,50 +35,6 @@ DIMENSION relative_to_absolute_size(BOX* self_box)
         absolute_size.y1 += current->size.y1;
     }
     return absolute_size;
-}
-
-
-void draw_raw_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings)
-{
-    int p;
-    cursor_goto(global_size.x0, global_size.y0);
-    putwchar(settings.corner.top_left);
-    for(p = global_size.x0; p < global_size.x1 - 1; p++)
-    {
-        putwchar(settings.border.horizontal);
-    }
-    putwchar(settings.corner.top_right);
-    for(p = global_size.y0 + 1; p < global_size.y1; p++)
-    {
-        cursor_goto(global_size.x0, p);
-        putwchar(settings.border.vertical);
-        cursor_goto(global_size.x1, p);
-        putwchar(settings.border.vertical);
-    }
-    cursor_goto(global_size.x0, global_size.y1);
-    putwchar(settings.corner.bottom_left);
-    for(p = global_size.x0; p < global_size.x1 - 1; p++)
-    {
-        putwchar(settings.border.horizontal);
-    }
-    putwchar(settings.corner.bottom_right);
-    fflush(OUT_STREAM);
-}
-
-
-void draw_child_box()
-{
-}
-
-
-void draw_box(BOX* self_box)
-{
-    DIMENSION global_size = relative_to_absolute_size(self_box);
-    // check if dimension is possible
-    if(self_box->parent == NULL)
-        draw_raw_box(global_size, self_box->settings);
-    else
-        draw_child_box();
 }
 
 
@@ -175,4 +130,88 @@ short get_character_id(struct CUSTOMIZE_SETTINGS settings, wchar_t c)
         wprintf(L"Cannot find character %lc!!!!!", c);
         return L'\0';
     }
+}
+
+
+void draw_raw_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, struct SCREEN* screen)
+{
+    int p;
+    cursor_goto(global_size.x0, global_size.y0);
+    putwchar(settings.corner.top_left);
+    {
+        // TODO: RESTARLE 1 a todo
+        screen->screen_arr[(global_size.x0-1) * (screen->size.y1 - 1) + global_size.y0-1] =
+        get_character_id(settings, settings.corner.top_left);
+    }
+    for(p = global_size.x0 + 1; p < global_size.x1; p++)
+    {
+        putwchar(settings.border.horizontal);
+        {
+            screen->screen_arr[(global_size.x0 + p) * (screen->size.y1 - 1) +
+            global_size.y0] = get_character_id(settings, settings.corner.top_left);
+        }
+    }
+    putwchar(settings.corner.top_right);
+    {
+        screen
+        ->screen_arr[(global_size.x1) * (screen->size.y1 - 1) + global_size.y0] =
+        get_character_id(settings, settings.corner.top_left);
+    }
+    for(p = global_size.y0 + 1; p < global_size.y1; p++)
+    {
+        cursor_goto(global_size.x0, p);
+        putwchar(settings.border.vertical);
+        {
+            screen->screen_arr[(global_size.x0) * (screen->size.y1 - 1) + p] =
+            get_character_id(settings, settings.corner.top_left);
+        }
+        cursor_goto(global_size.x1, p);
+        putwchar(settings.border.vertical);
+        {
+            screen->screen_arr[(global_size.x1) * (screen->size.y1 - 1) + p] =
+            get_character_id(settings, settings.corner.top_left);
+        }
+    }
+    cursor_goto(global_size.x0, global_size.y1);
+    putwchar(settings.corner.bottom_left);
+    {
+        screen
+        ->screen_arr[(global_size.x0) * (screen->size.y1 - 1) + global_size.y1] =
+        get_character_id(settings, settings.corner.top_left);
+    }
+    for(p = global_size.x0 + 1; p < global_size.x1; p++)
+    {
+        putwchar(settings.border.horizontal);
+        {
+            screen->screen_arr[(global_size.x0 + p) * (screen->size.y1 - 1) +
+            global_size.y1] = get_character_id(settings, settings.corner.top_left);
+        }
+    }
+    putwchar(settings.corner.bottom_right);
+    {
+        screen
+        ->screen_arr[(global_size.x1) * (screen->size.y1 - 1) + global_size.y1] =
+        get_character_id(settings, settings.corner.top_left);
+    }
+    fflush(OUT_STREAM);
+    cursor_goto(1, 1);
+    for(int i = 0; i < global_size.x1; i++)
+        for(int j = 0; j < global_size.y1; j++)
+            wprintf(L"%d", screen->screen_arr[j * (screen->size.y1 - 1) + i]);
+}
+
+
+void draw_child_box()
+{
+}
+
+
+void draw_box(BOX* self_box, struct SCREEN* screen)
+{
+    DIMENSION global_size = relative_to_absolute_size(self_box);
+    // check if dimension is possible
+    if(self_box->parent == NULL)
+        draw_raw_box(global_size, self_box->settings, screen);
+    else
+        draw_child_box();
 }
