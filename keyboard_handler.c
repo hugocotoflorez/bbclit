@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 #include <wchar.h>
 
@@ -38,6 +39,7 @@ void enableRawMode()
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
+
 
 /**
  * keyboard_handler

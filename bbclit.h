@@ -71,7 +71,6 @@ typedef struct __DIMENSION
 typedef struct __BOX
 {
     DIMENSION size;
-    struct __BOX* parent;
     struct CUSTOMIZE_SETTINGS settings;
 } BOX;
 
@@ -85,9 +84,8 @@ struct SCREEN
 
 // FUNCTIONS
 
-extern struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS();
-extern BOX new_box(BOX* parent, DIMENSION size);
 extern DIMENSION fullscreen();
+extern BOX new_box(BOX* parent, DIMENSION size);
 extern void draw_box(BOX* self_box, struct SCREEN* screen);
 extern void clear_screen();
 extern void keyboard_handler(bool CANCELLATION_SIGNAL);

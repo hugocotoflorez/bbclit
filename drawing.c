@@ -37,20 +37,6 @@ void enable_wide_mode()
 }
 
 
-DIMENSION relative_to_absolute_size(BOX* self_box)
-{
-    DIMENSION absolute_size = { 0, 0, 0, 0 };
-    for(BOX* current = self_box; current != NULL; current = current->parent)
-    {
-        absolute_size.x0 += current->size.x0;
-        absolute_size.y0 += current->size.y0;
-        absolute_size.x1 += current->size.x1;
-        absolute_size.y1 += current->size.y1;
-    }
-    return absolute_size;
-}
-
-
 wchar_t get_character_by_id(struct CUSTOMIZE_SETTINGS settings, short id)
 {
     switch(id)
@@ -95,7 +81,7 @@ short get_intersection_id(short wcID1, short wcID2)
      *  Example: | is 2,4 -> 0101 -> 5
      *  Example: - is 1,3 -> 1010 -> 10
      *
-     * To add intersections just do an or of their binary number
+     * To add intersections just do an or of their binary id number
      *
      */
     return wcID1 | wcID2;
@@ -286,9 +272,5 @@ void draw_box(BOX* self_box, struct SCREEN* screen)
 {
     DIMENSION global_size = (self_box->size);
     // check if dimension is possible
-    if(self_box->parent == NULL)
-        draw_child_box(global_size, self_box->settings, screen);
-    // draw_raw_box(global_size, self_box->settings, screen);
-    else
-        draw_child_box(global_size, self_box->settings, screen);
+    draw_child_box(global_size, self_box->settings, screen);
 }
