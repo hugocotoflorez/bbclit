@@ -13,25 +13,25 @@
 
 struct CORNER
 {
-    wchar_t top_left;
-    wchar_t top_right;
-    wchar_t bottom_left;
-    wchar_t bottom_right;
+    const wchar_t top_left;
+    const wchar_t top_right;
+    const wchar_t bottom_left;
+    const wchar_t bottom_right;
 };
 
 struct BORDER
 {
-    wchar_t vertical;
-    wchar_t horizontal;
+    const wchar_t vertical;
+    const wchar_t horizontal;
 };
 
 struct INTERSECTION
 {
-    wchar_t vertical_right;
-    wchar_t vertical_left;
-    wchar_t horizontal_up;
-    wchar_t horizontal_down;
-    wchar_t full_intersection;
+    const wchar_t vertical_right;
+    const wchar_t vertical_left;
+    const wchar_t horizontal_up;
+    const wchar_t horizontal_down;
+    const wchar_t full_intersection;
 };
 
 struct COLOR
@@ -82,4 +82,5 @@ extern DIMENSION fullscreen();
 extern void draw_box(BOX* self_box);
 extern void clear_screen();
 extern void keyboard_handler(bool CANCELLATION_SIGNAL);
+extern void enable_wide_mode();
 #endif // !BCLI_H

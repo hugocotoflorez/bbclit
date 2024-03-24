@@ -10,10 +10,10 @@
  */
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <wchar.h>
 
 #define EXIT_POINT 27 // ESC key
@@ -42,18 +42,20 @@ void enableRawMode()
 /**
  * keyboard_handler
  */
-//possible declaration
-//void keyboard_handler(int* buffer, int* current_buffer_position, void(*f)(void) launcher_on_keypress)
-// Circular buffer?????????????
+// possible declaration
+// void keyboard_handler(int* buffer, int* current_buffer_position, void(*f)(void) launcher_on_keypress)
+//  Circular buffer?????????????
 void keyboard_handler(bool CANCELLATION_SIGNAL)
 {
     char c;
+    int o;
     enableRawMode();
     // TODO: ERROR? if waiting for input and then CANCELLATION_SIGNAL is called it wouldn exit until read refreshes
-    while(read(STDIN_FILENO, &c, 1)>=0 && c != EXIT_POINT &&! CANCELLATION_SIGNAL)
+    while((o = read(STDIN_FILENO, &c, 1)) >= 0 && c != EXIT_POINT && !CANCELLATION_SIGNAL)
     {
         // TODO
-        sleep(1);
+        if(o == 0) // si no hay input
+            sleep(1);
     }
     disableRawMode();
 }
@@ -76,4 +78,3 @@ bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN)
     disableRawMode();
     return fgets(OUT_STR, MAX_LEN, IN_STREAM) == NULL;
 }
-

@@ -15,8 +15,7 @@ int main(int argc, char** arcv)
     // clear_screen();
     DIMENSION size = fullscreen();
     // DIMENSION size = {5,10,5,10};
-    setlocale(LC_ALL, "");
-    fwide(stdout, 1);
+    enable_wide_mode();
     BOX main_box = new_box(NULL, size);
     draw_box(&main_box);
     bool i = false;
