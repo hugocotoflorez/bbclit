@@ -11,13 +11,20 @@ void cursor_goto(int x, int y)
 }
 
 
-void __DEBUG_print_charId_matix(struct SCREEN *screen, DIMENSION global_size)
+void clear_screen()
+{
+    wprintf(L"\e[H\e[J");
+    fflush(OUT_STREAM);
+}
+
+
+void __DEBUG_print_charId_matix(struct SCREEN* screen, DIMENSION global_size)
 {
     cursor_goto(1, 1);
     for(int j = 0; j < global_size.y1; j++)
     {
         for(int i = 0; i < global_size.x1; i++)
-            wprintf(L"%d", screen->screen_arr[i * (screen->size.y1 - 1) + j]);
+            wprintf(L"%x", screen->screen_arr[i * (screen->size.y1) + j]);
     }
     fflush(OUT_STREAM);
 }
@@ -27,12 +34,6 @@ void enable_wide_mode()
 {
     setlocale(LC_ALL, "");
     fwide(stdout, 1);
-}
-
-
-void clear_screen()
-{
-    wprintf(L"\e[2J");
 }
 
 
@@ -108,6 +109,7 @@ wchar_t get_character_by_id(struct CUSTOMIZE_SETTINGS settings, short id)
             break;
         default:
             wprintf(L"Cannot find %d character!!!!!", id);
+            exit(1);
             return L'\0';
     }
 }
@@ -140,6 +142,7 @@ short get_character_id(struct CUSTOMIZE_SETTINGS settings, wchar_t c)
     else
     {
         wprintf(L"Cannot find character %lc!!!!!", c);
+        exit(1);
         return L'\0';
     }
 }
@@ -151,65 +154,65 @@ void draw_raw_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, str
     cursor_goto(global_size.x0, global_size.y0);
     putwchar(settings.corner.top_left);
     {
-        // TODO: RESTARLE 1 a todo
         screen
-        ->screen_arr[(global_size.x0 - 1) * (screen->size.y1 - 1) + global_size.y0 - 1] =
+        ->screen_arr[(global_size.x0 - 1) * (screen->size.y1) + global_size.y0 - 1] =
         get_character_id(settings, settings.corner.top_left);
     }
     for(p = global_size.x0 + 1; p < global_size.x1; p++)
     {
         putwchar(settings.border.horizontal);
         {
-            screen->screen_arr[(global_size.x0 + p - 1) * (screen->size.y1 - 1) +
-            global_size.y0 - 1] = get_character_id(settings, settings.corner.top_left);
+            screen->screen_arr[(p - 1) * (screen->size.y1) + global_size.y0 - 1] =
+            get_character_id(settings, settings.border.horizontal);
         }
     }
     putwchar(settings.corner.top_right);
     {
         screen
-        ->screen_arr[(global_size.x1 - 1) * (screen->size.y1 - 1) + global_size.y0 - 1] =
-        get_character_id(settings, settings.corner.top_left);
+        ->screen_arr[(global_size.x1 - 1) * (screen->size.y1) + global_size.y0 - 1] =
+        get_character_id(settings, settings.corner.top_right);
     }
     for(p = global_size.y0 + 1; p < global_size.y1; p++)
     {
         cursor_goto(global_size.x0, p);
         putwchar(settings.border.vertical);
         {
-            screen->screen_arr[(global_size.x0 - 1) * (screen->size.y1 - 1) + p - 1] =
-            get_character_id(settings, settings.corner.top_left);
+            screen->screen_arr[(global_size.x0 - 1) * (screen->size.y1) + p - 1] =
+            get_character_id(settings, settings.border.vertical);
         }
         cursor_goto(global_size.x1, p);
         putwchar(settings.border.vertical);
         {
-            screen->screen_arr[(global_size.x1 - 1) * (screen->size.y1 - 1) + p - 1] =
-            get_character_id(settings, settings.corner.top_left);
+            screen->screen_arr[(global_size.x1 - 1) * (screen->size.y1) + p - 1] =
+            get_character_id(settings, settings.border.vertical);
         }
     }
     cursor_goto(global_size.x0, global_size.y1);
     putwchar(settings.corner.bottom_left);
     {
         screen
-        ->screen_arr[(global_size.x0 - 1) * (screen->size.y1 - 1) + global_size.y1 - 1] =
-        get_character_id(settings, settings.corner.top_left);
+        ->screen_arr[(global_size.x0 - 1) * (screen->size.y1) + global_size.y1 - 1] =
+        get_character_id(settings, settings.corner.bottom_left);
     }
     for(p = global_size.x0 + 1; p < global_size.x1; p++)
     {
         putwchar(settings.border.horizontal);
         {
-            screen->screen_arr[(global_size.x0 + p - 1) * (screen->size.y1 - 1) +
-            global_size.y1 - 1] = get_character_id(settings, settings.corner.top_left);
+            screen->screen_arr[(p - 1) * (screen->size.y1) + global_size.y1 - 1] =
+            get_character_id(settings, settings.border.horizontal);
         }
     }
     putwchar(settings.corner.bottom_right);
     {
         screen
-        ->screen_arr[(global_size.x1 - 1) * (screen->size.y1 - 1) + global_size.y1 - 1] =
-        get_character_id(settings, settings.corner.top_left);
+        ->screen_arr[(global_size.x1 - 1) * (screen->size.y1) + global_size.y1 - 1] =
+        get_character_id(settings, settings.corner.bottom_right);
     }
     fflush(OUT_STREAM);
-    __DEBUG_print_charId_matix(screen, global_size);
+    //......
+    //__DEBUG_print_charId_matix(screen, global_size);
+    //......
 }
-
 
 
 void draw_child_box()
