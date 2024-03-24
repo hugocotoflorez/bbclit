@@ -1,36 +1,37 @@
 #ifndef BCLI_H
 #define BCLI_H
 
+#include <wchar.h>
+#include <stdbool.h>
 // .......... DEFINES
 
 // \e[0;%2d;%2d;%2dm where each %d can be color or style format
 #define COLOR_FORMAT(a) char a[13]
 
-#define LARGE_CHAR(a) char a[2]
 
 // .......... CUSTOMIZE SETTINGS
 
 struct CORNER
 {
-    LARGE_CHAR(top_left);
-    LARGE_CHAR(top_right);
-    LARGE_CHAR(bottom_left);
-    LARGE_CHAR(bottom_right);
+    wchar_t top_left;
+    wchar_t top_right;
+    wchar_t bottom_left;
+    wchar_t bottom_right;
 };
 
 struct BORDER
 {
-    LARGE_CHAR(vertical);
-    LARGE_CHAR(horizontal);
+    wchar_t vertical;
+    wchar_t horizontal;
 };
 
 struct INTERSECTION
 {
-    LARGE_CHAR(vertical_right);
-    LARGE_CHAR(vertical_left);
-    LARGE_CHAR(horizontal_up);
-    LARGE_CHAR(horizontal_down);
-    LARGE_CHAR(full_intersection);
+    wchar_t vertical_right;
+    wchar_t vertical_left;
+    wchar_t horizontal_up;
+    wchar_t horizontal_down;
+    wchar_t full_intersection;
 };
 
 struct COLOR
@@ -55,6 +56,7 @@ struct CUSTOMIZE_SETTINGS
 
 /**
  * Dimensions
+ * start in x0,y0 (included) and exit in x1,y1 (excluded)
  * X is horizontal axis
  * Y is vertical axis
  */
@@ -68,7 +70,6 @@ typedef struct __BOX
 {
     DIMENSION size;
     struct __BOX* parent;
-    struct __BOX* attached_boxes;
     struct CUSTOMIZE_SETTINGS settings;
 } BOX;
 
@@ -78,5 +79,7 @@ typedef struct __BOX
 extern struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS();
 extern BOX new_box(BOX* parent, DIMENSION size);
 extern DIMENSION fullscreen();
-
+extern void draw_box(BOX* self_box);
+extern void clear_screen();
+extern void keyboard_handler(bool CANCELLATION_SIGNAL);
 #endif // !BCLI_H

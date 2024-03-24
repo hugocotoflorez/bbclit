@@ -14,6 +14,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <wchar.h>
 
 #define EXIT_POINT 27 // ESC key
 
@@ -49,9 +50,10 @@ void keyboard_handler(bool CANCELLATION_SIGNAL)
     char c;
     enableRawMode();
     // TODO: ERROR? if waiting for input and then CANCELLATION_SIGNAL is called it wouldn exit until read refreshes
-    while(read(STDIN_FILENO, &c, 1) && c != EXIT_POINT &&! CANCELLATION_SIGNAL)
+    while(read(STDIN_FILENO, &c, 1)>=0 && c != EXIT_POINT &&! CANCELLATION_SIGNAL)
     {
         // TODO
+        sleep(1);
     }
     disableRawMode();
 }

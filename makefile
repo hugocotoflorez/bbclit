@@ -1,6 +1,6 @@
 # --------------------------- OPTIONS --------------------------- #
 # Compiler options
-CC=gcc -Wall
+CC=@gcc -Wall
 # Libraries
 LIBS =
 HEADER_FILES_DIR = .
