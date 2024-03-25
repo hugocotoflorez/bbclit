@@ -18,6 +18,18 @@ void clear_screen()
 }
 
 
+void hide_cursor()
+{
+    wprintf(L"\e[?25l");
+}
+
+
+void show_cursor()
+{
+    wprintf(L"\e[?25h");
+}
+
+
 void __DEBUG_print_charId_matix(struct SCREEN* screen, DIMENSION global_size)
 {
     cursor_goto(1, 1);
@@ -139,7 +151,7 @@ short get_character_id(struct CUSTOMIZE_SETTINGS settings, wchar_t c)
 }
 
 
-void draw_child_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, struct SCREEN* screen)
+void draw_rutine(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, struct SCREEN* screen)
 {
     int p;
     wchar_t c;
@@ -204,9 +216,15 @@ void draw_child_box(DIMENSION global_size, struct CUSTOMIZE_SETTINGS settings, s
 }
 
 
-void draw_box(BOX* self_box, struct SCREEN* screen)
+void draw_box(BOX* box, struct SCREEN* screen)
 {
-    DIMENSION global_size = (self_box->size);
-    // check if dimension is possible
-    draw_child_box(global_size, self_box->settings, screen);
+    if(box->size.x0 < screen->size.x0 || box->size.x1 > screen->size.x1 ||
+    box->size.y0 < screen->size.y0 || box->size.y1 > screen->size.y1 ||
+    box->size.x0 >= box->size.x1 || box->size.y0 >= box->size.y1)
+    {
+        // no se comprueba que se no se sobreponga por encima de otras boxes
+        wprintf(L"INVALID SIZE");
+        return;
+    }
+    draw_rutine(box->size, box->settings, screen);
 }

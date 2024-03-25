@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <wchar.h>
+//
 // .......... DEFINES
 #define IN_STREAM stdin
 #define OUT_STREAM stdout
@@ -82,13 +83,23 @@ struct SCREEN
     short* screen_arr;
 };
 
-// FUNCTIONS
 
-extern DIMENSION fullscreen();
-extern BOX new_box(BOX* parent, DIMENSION size);
+// ......... FUNCTIONS
+
+// drawing.c
 extern void draw_box(BOX* self_box, struct SCREEN* screen);
 extern void clear_screen();
-extern void keyboard_handler(bool CANCELLATION_SIGNAL);
 extern void enable_wide_mode();
+extern void show_cursor();
+extern void hide_cursor();
+// keyboard_handler.c
+extern void keyboard_handler(bool CANCELLATION_SIGNAL);
+// boxes.c
 extern struct SCREEN initialize_screen();
+extern DIMENSION fullscreen();
+extern BOX new_box(DIMENSION size);
+void vsplit(DIMENSION src_size, DIMENSION* dest_size_top, DIMENSION* dest_size_bottom, float redux);
+void hsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_right, float redux);
+
+
 #endif // !BCLI_H

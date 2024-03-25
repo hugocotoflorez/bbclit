@@ -37,7 +37,18 @@ void enableRawMode()
     raw.c_lflag &= ~(OPOST);
     raw.c_lflag |= (CS8);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+    raw.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+}
+
+
+void mssleep(int milliseconds)
+{
+    struct timespec t;
+    struct timespec _t;
+    t.tv_sec  = milliseconds / 1000;
+    t.tv_nsec = (milliseconds % 1000) * 1000000;
+    nanosleep(&t, &_t);
 }
 
 
@@ -49,15 +60,22 @@ void enableRawMode()
 //  Circular buffer?????????????
 void keyboard_handler(bool CANCELLATION_SIGNAL)
 {
-    char c;
+    wprintf(L"\e[1;1H");
+    char c = '#';
     int o;
     enableRawMode();
     // TODO: ERROR? if waiting for input and then CANCELLATION_SIGNAL is called it wouldn exit until read refreshes
     while((o = read(STDIN_FILENO, &c, 1)) >= 0 && c != EXIT_POINT && !CANCELLATION_SIGNAL)
     {
-        // TODO
+        // HAY DELAY, SE PUEDE BAJAR EL SLEEP
         if(o == 0) // si no hay input
-            sleep(1);
+        {
+            // wprintf(L"\e[11;11H SP");
+            //  idk why but this sleep for 1/10 s
+            mssleep(10);
+        }
+        wprintf(L"\e[10;10H%c", c);
+        // wprintf(L"\e[11;11H UP");
     }
     disableRawMode();
 }

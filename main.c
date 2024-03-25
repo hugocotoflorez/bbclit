@@ -13,24 +13,33 @@
 int main(int argc, char** arcv)
 {
     enable_wide_mode();
+    hide_cursor();
     clear_screen();
     struct SCREEN screen = initialize_screen();
-    DIMENSION size       = fullscreen();
-    DIMENSION size2      = { size.x0, size.x1 / 2, size.y0, size.y1 };
-    DIMENSION size3      = { size2.x0, size2.x1 / 3, size2.y0, size2.y1 };
-    DIMENSION size4      = { size2.x0+10, size2.x1-10, size2.y0 + 10, size2.y1 };
-    BOX main_box         = new_box(NULL, size);
-    BOX split            = new_box(NULL, size2);
-    BOX split2           = new_box(NULL, size3);
-    BOX split3           = new_box(NULL, size4);
+    DIMENSION size       = fullscreen(); // no used, just to create splits
+    DIMENSION size2; // no used
+    DIMENSION size3;
+    DIMENSION size4;
+    DIMENSION size5;
 
-    draw_box(&main_box, &screen);
-    draw_box(&split, &screen);
+    vsplit(size, &size2, &size3, 0.5);
+    hsplit(size2, &size5, &size4, 0.25);
+
+    BOX split1 = new_box(size3);
+    BOX split2 = new_box(size4);
+    BOX split3 = new_box(size5);
+
+
+    draw_box(&split1, &screen);
     draw_box(&split2, &screen);
     draw_box(&split3, &screen);
+
     bool i = false;
     keyboard_handler(i);
+
     free(screen.screen_arr);
     clear_screen();
+    show_cursor();
+
     return 0;
 }
