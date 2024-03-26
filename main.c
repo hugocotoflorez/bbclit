@@ -5,17 +5,20 @@
 
 #include "bbclit.h"
 #include <stdbool.h>
-#include <stdlib.h>
 #include <wchar.h>
+
 
 void move_down()
 {
     wprintf(L"\e[10;10Hj");
 }
+
+
 void move_up()
 {
     wprintf(L"\e[10;10Hk");
 }
+
 
 int main(int argc, char** arcv)
 {

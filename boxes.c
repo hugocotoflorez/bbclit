@@ -3,7 +3,9 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
+
 struct SCREEN screen;
+
 
 struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS()
 {

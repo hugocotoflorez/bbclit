@@ -9,7 +9,7 @@ OUTPUT = main
 # Header files
 LIB_HEADERS = $(HEADER_FILES_DIR)/bbclit.h
 # Source files
-SRCS = main.c bbclit.c keyboard_handler.c ./boxes.c ./drawing.c
+SRCS = main.c modules.c keyboard_handler.c ./boxes.c ./drawing.c
 
 # --------------------------------------------------------------- #
 

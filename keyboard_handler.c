@@ -1,5 +1,5 @@
-/*came
- * Independent keyboard hadler
+/*
+ * Independent keyboard handler
  *
  * Raw mode source code:
  * (Documentation about RawMode here)
