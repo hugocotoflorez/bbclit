@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
+struct SCREEN screen;
 
 struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS()
 {
@@ -48,13 +49,19 @@ DIMENSION fullscreen()
 }
 
 
+void free_screen()
+{
+    free(screen.screen_arr);
+}
+
+
 struct SCREEN initialize_screen()
 {
-    struct SCREEN screen;
     screen.size = fullscreen();
     screen.screen_arr = malloc(sizeof(short) * (screen.size.y1) * (screen.size.x1));
     for(int i = 0; i < (screen.size.y1 - 1) * (screen.size.x1 - 1); i++)
         screen.screen_arr[i] = 0;
+    atexit(free_screen);
     return screen;
 }
 
@@ -73,7 +80,7 @@ void hsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_
 {
     // if redux > 1 or redux too litle may cause error
     *dest_size_left =
-    (DIMENSION){ src_size.x0, src_size.x1*redux, src_size.y0, src_size.y1 };
+    (DIMENSION){ src_size.x0, src_size.x1 * redux, src_size.y0, src_size.y1 };
     *dest_size_right =
-    (DIMENSION){ src_size.x1*redux, src_size.x1, src_size.y0, src_size.y1 };
+    (DIMENSION){ src_size.x1 * redux, src_size.x1, src_size.y0, src_size.y1 };
 }

@@ -94,6 +94,10 @@ extern void show_cursor();
 extern void hide_cursor();
 // keyboard_handler.c
 extern void keyboard_handler(bool CANCELLATION_SIGNAL);
+extern void initialize_keybinds();
+extern bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN);
+extern void bind(char key, void f(void));
+void delete_keybinds();
 // boxes.c
 extern struct SCREEN initialize_screen();
 extern DIMENSION fullscreen();

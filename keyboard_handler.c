@@ -9,6 +9,7 @@
  * Hugo Coto Florez
  */
 
+#include "bbclit.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +20,65 @@
 
 #define EXIT_POINT 27 // ESC key
 
+
 struct termios origin_termios;
+
+
+typedef struct __BIND
+{
+    void (*action)(void);
+    char key;
+} BIND;
+
+
+struct __KEYBINDS
+{
+    bool (*key_exists)(char);
+    void (*add)(char, void (*action)(void));
+    BIND* binds;
+    int binds_n;
+} KEYBINDS;
+
+
+bool key_exists(char key)
+{
+    for(int i = 0; i < KEYBINDS.binds_n; i++)
+    {
+        if(KEYBINDS.binds[i].key == key)
+            return true;
+    }
+    return false;
+}
+
+
+void add(char key, void (*action)(void))
+{
+    KEYBINDS.binds = realloc(KEYBINDS.binds, (KEYBINDS.binds_n + 1) * sizeof(BIND));
+    KEYBINDS.binds[KEYBINDS.binds_n++] = (BIND){ action , key};
+}
+
+
+void free_binds()
+{
+    free(KEYBINDS.binds);
+}
+
+
+void delete_keybinds()
+{
+    if (KEYBINDS.binds != NULL)
+        free(KEYBINDS.binds);
+}
+
+
+void initialize_keybinds()
+{
+    KEYBINDS.key_exists = key_exists;
+    KEYBINDS.add        = add;
+    KEYBINDS.binds      = NULL;
+    KEYBINDS.binds_n    = 0;
+    atexit(delete_keybinds);
+}
 
 
 void disableRawMode()
@@ -37,11 +96,12 @@ void enableRawMode()
     raw.c_lflag &= ~(OPOST);
     raw.c_lflag |= (CS8);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
-    raw.c_cc[VTIME] = 0;
+    // raw.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
 
+// should work but..
 void mssleep(int milliseconds)
 {
     struct timespec t;
@@ -52,15 +112,31 @@ void mssleep(int milliseconds)
 }
 
 
+void execute_bind(char key)
+{
+    for(int i = 0; i < KEYBINDS.binds_n; i++)
+    {
+        if(KEYBINDS.binds[i].key == key)
+        {
+            KEYBINDS.binds[i].action();
+            return;
+        }
+    }
+}
+
+
+void bind(char key, void f(void))
+{
+    if(!KEYBINDS.key_exists(key))
+        KEYBINDS.add(key, f);
+}
+
+
 /**
  * keyboard_handler
  */
-// possible declaration
-// void keyboard_handler(int* buffer, int* current_buffer_position, void(*f)(void) launcher_on_keypress)
-//  Circular buffer?????????????
 void keyboard_handler(bool CANCELLATION_SIGNAL)
 {
-    wprintf(L"\e[1;1H");
     char c = '#';
     int o;
     enableRawMode();
@@ -74,8 +150,9 @@ void keyboard_handler(bool CANCELLATION_SIGNAL)
             //  idk why but this sleep for 1/10 s
             mssleep(10);
         }
-        wprintf(L"\e[10;10H%c", c);
-        // wprintf(L"\e[11;11H UP");
+        execute_bind(c);
+        // wprintf(L"\e[10;10H%c", c);
+        //  wprintf(L"\e[11;11H UP");
     }
     disableRawMode();
 }

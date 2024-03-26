@@ -14,6 +14,7 @@ void cursor_goto(int x, int y)
 void clear_screen()
 {
     wprintf(L"\e[H\e[J");
+    // delete fflush?
     fflush(OUT_STREAM);
 }
 
