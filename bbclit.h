@@ -100,6 +100,12 @@ typedef struct __DIMENSION
 } DIMENSION;
 
 
+typedef struct __PAIR
+{
+    int x, y;
+} PAIR;
+
+
 typedef struct __BOX
 {
     DIMENSION size;
@@ -140,9 +146,11 @@ void hsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_
 
 
 // modules.c
-void selection_box(void f(int), BOX parent, MODULE_OPTIONS opt);
+void selection_box(void trigger(int), BOX parent, MODULE_OPTIONS opt);
 void add_entry(void func(void), char caller, const char* text);
 MODULE_OPTIONS DEFAULT_MODULE_OPTIONS();
 
+extern void initialize_paragraph(BOX parent);
+extern void appendnl_text(char* text);
 
 #endif // !BCLI_H

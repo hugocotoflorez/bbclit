@@ -5,21 +5,22 @@
 
 #include "bbclit.h"
 #include <stdbool.h>
-#include <stdio.h>
-#include <wchar.h>
 
 
 void trigger(int n)
 {
-    switch (n) {
+    switch(n)
+    {
         case 1:
-            wprintf(L"\e[10;10H(1)");
+            appendnl_text("Entry 1 selected");
             break;
         case 2:
-            wprintf(L"\e[10;10H(2)");
+            appendnl_text("Entry 2 selected");
+            break;
+        default:
+            appendnl_text("Some entry selected");
             break;
     }
-    fflush(OUT_STREAM);
 }
 
 
@@ -31,26 +32,36 @@ int main(int argc, char** arcv)
     initialize_keybinds();
     MODULE_OPTIONS opt   = DEFAULT_MODULE_OPTIONS();
     struct SCREEN screen = initialize_screen();
-    DIMENSION size       = fullscreen(); // no used, just to create splits
-    DIMENSION size2;                     // no used
+    /*
+     * IDK WHY BUT IF I USE THE SAME DIMENSION AS SRC AND DEST
+     * SOMETIMES IT CRASHES AND PRINT THE BORDERS WRONGLY. IF
+     * I USE SIZE AS DEST IT CRASHES AND SOME PART OF THE SCREEN
+     * STOPS WORKING.       TODO! FIX THAT SHIT
+     */
+    DIMENSION size = fullscreen(); // no used, just to create splits
+    DIMENSION size1;               // no used
+    DIMENSION size2;               // no used
     DIMENSION size3;
-    DIMENSION size4;
-    DIMENSION size5;
 
-    vsplit(size, &size2, &size3, 0.5);
-    hsplit(size2, &size5, &size4, 0.25);
+    vsplit(size, &size1, &size2, 0.25);
+    hsplit(size1, &size1, &size3, 0.75);
 
-    BOX split1 = new_box(size3);
-    BOX split2 = new_box(size4);
-    BOX split3 = new_box(size5);
+    BOX split1 = new_box(size1);
+    BOX split2 = new_box(size2);
+    BOX split3 = new_box(size3);
 
     draw_box(&split1, &screen);
     draw_box(&split2, &screen);
     draw_box(&split3, &screen);
 
+    initialize_paragraph(split2);
+
     selection_box(trigger, split1, opt);
-    add_entry(0, 'k', "Move up");
-    add_entry(0, 'j', "Move down");
+    add_entry(0, '1', "Entry 1");
+    add_entry(0, '2', "Entry 2");
+    add_entry(0, '3', "Entry 3");
+    add_entry(0, '4', "Entry 4");
+    add_entry(0, '5', "Entry 5");
 
     bool i = false;
     keyboard_handler(i);

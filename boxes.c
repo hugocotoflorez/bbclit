@@ -69,7 +69,7 @@ struct SCREEN initialize_screen()
 }
 
 
-void vsplit(DIMENSION src_size, DIMENSION* dest_size_top, DIMENSION* dest_size_bottom, float redux)
+void hsplit(DIMENSION src_size, DIMENSION* dest_size_top, DIMENSION* dest_size_bottom, float redux)
 {
     // if redux > 1 or redux too litle may cause error
     *dest_size_top =
@@ -79,7 +79,7 @@ void vsplit(DIMENSION src_size, DIMENSION* dest_size_top, DIMENSION* dest_size_b
 }
 
 
-void hsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_right, float redux)
+void vsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_right, float redux)
 {
     // if redux > 1 or redux too litle may cause error
     *dest_size_left =
