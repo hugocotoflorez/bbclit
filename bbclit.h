@@ -31,7 +31,7 @@ enum ALIGN
 struct MODULE_ACTIONS
 {
     char caller;
-    char text_msg[MAX_LINE_LEN] ;
+    char text_msg[MAX_LINE_LEN];
     void (*action)(void);
 };
 
@@ -39,7 +39,7 @@ struct MODULE_ACTIONS
 typedef struct
 {
     enum ALIGN align;
-    struct MODULE_ACTIONS *options;
+    struct MODULE_ACTIONS* options;
     int actions_n;
 } MODULE_OPTIONS;
 
@@ -140,7 +140,7 @@ void hsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_
 
 
 // modules.c
-void selection_box(BOX parent, MODULE_OPTIONS opt);
+void selection_box(void f(int), BOX parent, MODULE_OPTIONS opt);
 void add_entry(void func(void), char caller, const char* text);
 MODULE_OPTIONS DEFAULT_MODULE_OPTIONS();
 

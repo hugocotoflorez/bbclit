@@ -5,12 +5,28 @@
 
 #include "bbclit.h"
 #include <stdbool.h>
+#include <stdio.h>
+#include <wchar.h>
+
+
+void trigger(int n)
+{
+    switch (n) {
+        case 1:
+            wprintf(L"\e[10;10H(1)");
+            break;
+        case 2:
+            wprintf(L"\e[10;10H(2)");
+            break;
+    }
+    fflush(OUT_STREAM);
+}
 
 
 int main(int argc, char** arcv)
 {
     enable_wide_mode();
-    //hide_cursor();
+    hide_cursor();
     clear_screen();
     initialize_keybinds();
     MODULE_OPTIONS opt   = DEFAULT_MODULE_OPTIONS();
@@ -32,7 +48,7 @@ int main(int argc, char** arcv)
     draw_box(&split2, &screen);
     draw_box(&split3, &screen);
 
-    selection_box(split1, opt);
+    selection_box(trigger, split1, opt);
     add_entry(0, 'k', "Move up");
     add_entry(0, 'j', "Move down");
 
