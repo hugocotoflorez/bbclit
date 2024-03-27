@@ -125,7 +125,6 @@ void execute_bind(char key)
 }
 
 
-
 /**
  * bind
  * Bind a function to a key
@@ -151,22 +150,16 @@ void bind(char key, void f(void))
  */
 void keyboard_handler(bool CANCELLATION_SIGNAL)
 {
-    char c = '#';
+    char c = 0;
     int o;
     enableRawMode();
     // TODO: ERROR? if waiting for input and then CANCELLATION_SIGNAL is called it wouldn exit until read refreshes
     while((o = read(STDIN_FILENO, &c, 1)) >= 0 && c != EXIT_POINT && !CANCELLATION_SIGNAL)
     {
-        // HAY DELAY, SE PUEDE BAJAR EL SLEEP
         if(o == 0) // si no hay input
-        {
-            // wprintf(L"\e[11;11H SP");
-            //  idk why but this sleep for 1/10 s
-            mssleep(10);
-        }
+            mssleep(100);
         execute_bind(c);
-        // wprintf(L"\e[10;10H%c", c);
-        //  wprintf(L"\e[11;11H UP");
+        c = 0; // avoid repetitive calls to last character
     }
     disableRawMode();
 }

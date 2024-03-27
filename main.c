@@ -5,19 +5,6 @@
 
 #include "bbclit.h"
 #include <stdbool.h>
-#include <wchar.h>
-
-
-void move_down()
-{
-    wprintf(L"\e[10;10Hj");
-}
-
-
-void move_up()
-{
-    wprintf(L"\e[10;10Hk");
-}
 
 
 int main(int argc, char** arcv)
@@ -45,9 +32,9 @@ int main(int argc, char** arcv)
     draw_box(&split2, &screen);
     draw_box(&split3, &screen);
 
-    selection_box(split3, opt);
-    add_entry(move_up, 'k', "Move up");
-    add_entry(move_down, 'j', "Move down");
+    selection_box(split1, opt);
+    add_entry(0, 'k', "Move up");
+    add_entry(0, 'j', "Move down");
 
     bool i = false;
     keyboard_handler(i);

@@ -14,7 +14,7 @@ void cursor_goto(int x, int y)
 
 void clear_screen()
 {
-    wprintf(L"\e[H\e[J");
+    wprintf(L"\e[0m\e[H\e[J");
     fflush(OUT_STREAM);
 }
 

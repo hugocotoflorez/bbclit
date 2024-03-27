@@ -124,13 +124,13 @@ extern void clear_screen();
 extern void enable_wide_mode();
 extern void show_cursor();
 extern void hide_cursor();
-void cursor_goto(int x, int y);
+extern void cursor_goto(int x, int y);
 // keyboard_handler.c
 extern void keyboard_handler(bool CANCELLATION_SIGNAL);
 extern void initialize_keybinds();
 extern bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN);
 extern void bind(char key, void f(void));
-void delete_keybinds();
+extern void delete_keybinds();
 // boxes.c
 extern struct SCREEN initialize_screen();
 extern DIMENSION fullscreen();
