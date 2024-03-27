@@ -34,6 +34,7 @@ BOX new_box(DIMENSION dimension)
     BOX new_box;
     new_box.size     = dimension;
     new_box.settings = DEFAULT_CUSTOMIZE_SETTINGS();
+    new_box.box_ptr = (DIMENSION){dimension.x0, dimension.y0};
     return new_box;
 }
 

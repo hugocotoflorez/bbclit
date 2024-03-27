@@ -8,13 +8,13 @@
 void cursor_goto(int x, int y)
 {
     wprintf(L"\e[%d;%dH", y, x);
+    fflush(OUT_STREAM);
 }
 
 
 void clear_screen()
 {
     wprintf(L"\e[H\e[J");
-    // delete fflush?
     fflush(OUT_STREAM);
 }
 
@@ -22,12 +22,14 @@ void clear_screen()
 void hide_cursor()
 {
     wprintf(L"\e[?25l");
+    fflush(OUT_STREAM);
 }
 
 
 void show_cursor()
 {
     wprintf(L"\e[?25h");
+    fflush(OUT_STREAM);
 }
 
 

@@ -54,7 +54,7 @@ bool key_exists(char key)
 void add(char key, void (*action)(void))
 {
     KEYBINDS.binds = realloc(KEYBINDS.binds, (KEYBINDS.binds_n + 1) * sizeof(BIND));
-    KEYBINDS.binds[KEYBINDS.binds_n++] = (BIND){ action , key};
+    KEYBINDS.binds[KEYBINDS.binds_n++] = (BIND){ action, key };
 }
 
 
@@ -66,7 +66,7 @@ void free_binds()
 
 void delete_keybinds()
 {
-    if (KEYBINDS.binds != NULL)
+    if(KEYBINDS.binds != NULL)
         free(KEYBINDS.binds);
 }
 
@@ -125,10 +125,24 @@ void execute_bind(char key)
 }
 
 
+
+/**
+ * bind
+ * Bind a function to a key
+ * 1) if key is not binded it creates a new bind
+ * 2) if key is binded it replace the function with the new one
+ *
+ * Isnt needed to unbind keys at exit
+ */
 void bind(char key, void f(void))
 {
-    if(!KEYBINDS.key_exists(key))
-        KEYBINDS.add(key, f);
+    for(int i = 0; i < KEYBINDS.binds_n; i++)
+        if(KEYBINDS.binds[i].key == key)
+        {
+            KEYBINDS.binds[i].action = f;
+            return;
+        }
+    KEYBINDS.add(key, f);
 }
 
 

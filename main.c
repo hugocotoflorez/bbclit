@@ -23,9 +23,10 @@ void move_up()
 int main(int argc, char** arcv)
 {
     enable_wide_mode();
-    hide_cursor();
+    //hide_cursor();
     clear_screen();
     initialize_keybinds();
+    MODULE_OPTIONS opt   = DEFAULT_MODULE_OPTIONS();
     struct SCREEN screen = initialize_screen();
     DIMENSION size       = fullscreen(); // no used, just to create splits
     DIMENSION size2;                     // no used
@@ -44,8 +45,9 @@ int main(int argc, char** arcv)
     draw_box(&split2, &screen);
     draw_box(&split3, &screen);
 
-    bind('j', move_down);
-    bind('k', move_up);
+    selection_box(split3, opt);
+    add_entry(move_up, 'k', "Move up");
+    add_entry(move_down, 'j', "Move down");
 
     bool i = false;
     keyboard_handler(i);

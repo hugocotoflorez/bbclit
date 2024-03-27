@@ -8,9 +8,40 @@
 // .......... DEFINES
 #define IN_STREAM stdin
 #define OUT_STREAM stdout
+#define MAX_LINE_LEN 80
 
 // \e[0;%2d;%2d;%2dm where each %d can be color or style format
 #define COLOR_FORMAT(a) char a[13]
+
+
+// .......... OPTIONS FOR MODULES
+
+// not implemented, all aligns
+// would be represent equal
+enum ALIGN
+{
+    RIGHT,
+    LEFT,
+    CENTER,
+    TOP,
+    BOTTOM
+};
+
+
+struct MODULE_ACTIONS
+{
+    char caller;
+    char text_msg[MAX_LINE_LEN] ;
+    void (*action)(void);
+};
+
+
+typedef struct
+{
+    enum ALIGN align;
+    struct MODULE_ACTIONS *options;
+    int actions_n;
+} MODULE_OPTIONS;
 
 // .......... CUSTOMIZE SETTINGS
 
@@ -73,6 +104,7 @@ typedef struct __BOX
 {
     DIMENSION size;
     struct CUSTOMIZE_SETTINGS settings;
+    DIMENSION box_ptr;
 } BOX;
 
 
@@ -92,6 +124,7 @@ extern void clear_screen();
 extern void enable_wide_mode();
 extern void show_cursor();
 extern void hide_cursor();
+void cursor_goto(int x, int y);
 // keyboard_handler.c
 extern void keyboard_handler(bool CANCELLATION_SIGNAL);
 extern void initialize_keybinds();
@@ -104,6 +137,12 @@ extern DIMENSION fullscreen();
 extern BOX new_box(DIMENSION size);
 void vsplit(DIMENSION src_size, DIMENSION* dest_size_top, DIMENSION* dest_size_bottom, float redux);
 void hsplit(DIMENSION src_size, DIMENSION* dest_size_left, DIMENSION* dest_size_right, float redux);
+
+
+// modules.c
+void selection_box(BOX parent, MODULE_OPTIONS opt);
+void add_entry(void func(void), char caller, const char* text);
+MODULE_OPTIONS DEFAULT_MODULE_OPTIONS();
 
 
 #endif // !BCLI_H
