@@ -151,15 +151,29 @@ void bind(char key, void f(void))
 void keyboard_handler(bool CANCELLATION_SIGNAL)
 {
     char c = 0;
-    int o;
+    //char s[30]; // IDK WHAT THE FUCK HAPPENED BUT WITHOUT THIS
+                // DECLARATION IT EXPLOTES AND execute_bind DONT
+                // EXECUTES enter KEYPRESSES
+    /*
+     * Looks like moving o from int to ssize_t fixed the problem
+     * I think that some overflow in o writes c and because of this
+     * c is not recognised corectly by execute_bind
+     *
+     * Althought, im not going to end this issue after make sure is totally fixed
+     */
+    ssize_t o;
     enableRawMode();
-    // TODO: ERROR? if waiting for input and then CANCELLATION_SIGNAL is called it wouldn exit until read refreshes
     while((o = read(STDIN_FILENO, &c, 1)) >= 0 && c != EXIT_POINT && !CANCELLATION_SIGNAL)
     {
         if(o == 0) // si no hay input
             mssleep(100);
-        execute_bind(c);
-        c = 0; // avoid repetitive calls to last character
+        else
+        {
+            // sprintf(s, "character (%d) pressed", c);
+            // appendnl_text(s);
+            execute_bind(c);
+            c = 0; // avoid repetitive calls to last character
+        }
     }
     disableRawMode();
 }

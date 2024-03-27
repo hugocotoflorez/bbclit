@@ -211,6 +211,7 @@ struct __paragraph
     PAIR current_ptr;
     PAIR max_position;
     DIMENSION parent_size;
+    int lMARGIN;
     struct CUSTOMIZE_SETTINGS settings;
 } PARAGRAPH;
 
@@ -223,21 +224,38 @@ void initialize_paragraph(BOX parent)
     PARAGRAPH.max_position = (PAIR){ parent.size.x1 - 1, parent.size.y1 - 1 };
     PARAGRAPH.parent_size  = parent.size;
     PARAGRAPH.settings     = parent.settings;
+    PARAGRAPH.lMARGIN = 2;
+}
+
+
+void __LOGPRINT(char* msg, int n)
+{
+    FILE* f = fopen("log.txt", "a");
+    fprintf(f, "[%s] (%d):\t%s\n", __TIME__, n, msg);
+    fclose(f);
 }
 
 
 // for now text cannot exceed line length
 void appendnl_text(char* text)
 {
+        //__LOGPRINT("-- APPEND NL --", __LINE__);
     if(strlen(text) >= PARAGRAPH.line_length)
-        return; // text is too large
-
-    if(PARAGRAPH.current_ptr.x < PARAGRAPH.max_position.x) // not at last line
     {
-        cursor_goto(PARAGRAPH.parent_size.x0 + 1, PARAGRAPH.current_ptr.y);
+        //__LOGPRINT("LINE TOO LONG", __LINE__);
+        return; // text is too large
+    }
+    if(PARAGRAPH.current_ptr.y < PARAGRAPH.max_position.y) // not at last line
+    {
+        cursor_goto(PARAGRAPH.parent_size.x0 + PARAGRAPH.lMARGIN, PARAGRAPH.current_ptr.y);
         apply_color(PARAGRAPH.settings.color.text);
-        wprintf(L"%s", text);
-        reset_color();
         PARAGRAPH.current_ptr.y++;
+        wprintf(L"%s", text);
+        //__LOGPRINT(text, __LINE__);
+        reset_color(); // ya tiene fflush por lo que no se lo meto al wprintf
+    }
+    else
+    {
+        //__LOGPRINT("AT LAST LINE", __LINE__);
     }
 }

@@ -6,18 +6,27 @@
 #include "bbclit.h"
 #include <stdbool.h>
 
+void __LOG_PRINT(char* msg, int n)
+{
+    FILE* f = fopen("log.txt", "a");
+    fprintf(f, "[%s] (%d):\t%s\n", __TIME__, n, msg);
+    fclose(f);
+}
 
 void trigger(int n)
 {
     switch(n)
     {
         case 1:
+            //__LOG_PRINT("-- trigger -- 1", __LINE__);
             appendnl_text("Entry 1 selected");
             break;
         case 2:
+            //__LOG_PRINT("-- trigger -- 2", __LINE__);
             appendnl_text("Entry 2 selected");
             break;
         default:
+            //__LOG_PRINT("-- trigger -- n", __LINE__);
             appendnl_text("Some entry selected");
             break;
     }
