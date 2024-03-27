@@ -47,17 +47,8 @@ int main(int argc, char** arcv)
      * I USE SIZE AS DEST IT CRASHES AND SOME PART OF THE SCREEN
      * STOPS WORKING.       TODO! FIX THAT SHIT
      */
-    DIMENSION size = fullscreen(); // no used, just to create splits
-    DIMENSION size1;               // no used
-    DIMENSION size2;               // no used
-    DIMENSION size3;
-
-    vsplit(size, &size1, &size2, 0.25);
-    hsplit(size1, &size1, &size3, 0.75);
-
-    BOX split1 = new_box(size1);
-    BOX split2 = new_box(size2);
-    BOX split3 = new_box(size3);
+    BOX split1, split2, split3;
+    template1(&split1, &split2, &split3);
 
     draw_box(&split1, &screen);
     draw_box(&split2, &screen);

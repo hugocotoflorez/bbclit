@@ -63,7 +63,7 @@ wchar_t get_character_by_id(struct CUSTOMIZE_SETTINGS settings, short id)
         case 6:
             return settings.corner.bottom_left;
         case 7:
-            return settings.intersection.vertical_left;
+            return settings.intersection.vertical_right;
         case 9:
             return settings.corner.top_right;
         case 10:
@@ -73,7 +73,7 @@ wchar_t get_character_by_id(struct CUSTOMIZE_SETTINGS settings, short id)
         case 12:
             return settings.corner.bottom_right;
         case 13:
-            return settings.intersection.vertical_right;
+            return settings.intersection.vertical_left;
         case 14:
             return settings.intersection.horizontal_up;
         case 15:

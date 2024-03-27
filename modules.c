@@ -245,7 +245,7 @@ void appendnl_text(char* text)
         //__LOGPRINT("LINE TOO LONG", __LINE__);
         return; // text is too large
     }
-    if(PARAGRAPH.current_ptr.y < PARAGRAPH.max_position.y) // not at last line
+    if(PARAGRAPH.current_ptr.y <= PARAGRAPH.max_position.y) // not at last line
     {
         cursor_goto(PARAGRAPH.parent_size.x0 + PARAGRAPH.lMARGIN, PARAGRAPH.current_ptr.y);
         apply_color(PARAGRAPH.settings.color.text);

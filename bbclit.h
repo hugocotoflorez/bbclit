@@ -153,4 +153,8 @@ MODULE_OPTIONS DEFAULT_MODULE_OPTIONS();
 extern void initialize_paragraph(BOX parent);
 extern void appendnl_text(char* text);
 
+// templates.c
+void template1(BOX* split1, BOX* split2, BOX* split3);
+
+
 #endif // !BCLI_H

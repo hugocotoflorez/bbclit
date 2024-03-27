@@ -16,8 +16,8 @@ struct CUSTOMIZE_SETTINGS DEFAULT_CUSTOMIZE_SETTINGS()
     default_settings.corner.bottom_right            = L'┛';
     default_settings.border.vertical                = L'┃';
     default_settings.border.horizontal              = L'━';
-    default_settings.intersection.vertical_left     = L'┣';
-    default_settings.intersection.vertical_right    = L'┫';
+    default_settings.intersection.vertical_right    = L'┣';
+    default_settings.intersection.vertical_left     = L'┫';
     default_settings.intersection.horizontal_up     = L'┻';
     default_settings.intersection.horizontal_down   = L'┳';
     default_settings.intersection.full_intersection = L'╋';
@@ -34,7 +34,8 @@ BOX new_box(DIMENSION dimension)
     BOX new_box;
     new_box.size     = dimension;
     new_box.settings = DEFAULT_CUSTOMIZE_SETTINGS();
-    new_box.box_ptr = (DIMENSION){dimension.x0+1, dimension.x1+1,dimension.y0+1, dimension.y1+1};
+    new_box.box_ptr  = (DIMENSION){ dimension.x0 + 1, dimension.x1 + 1,
+         dimension.y0 + 1, dimension.y1 + 1 };
     return new_box;
 }
 
