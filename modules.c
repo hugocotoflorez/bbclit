@@ -207,7 +207,7 @@ void add_entry(void func(void), char caller, const char* text)
 struct __paragraph
 {
     int line_length, lines;
-    wchar_t* text;
+    char* text;
     PAIR current_ptr;
     PAIR max_position;
     DIMENSION parent_size;
@@ -216,15 +216,22 @@ struct __paragraph
 } PARAGRAPH;
 
 
+void free_paragraph()
+{
+    free(PARAGRAPH.text);
+}
+
 void initialize_paragraph(BOX parent)
 {
     PARAGRAPH.line_length  = parent.size.x1 - parent.size.x0;
+    PARAGRAPH.lines        = 0;
     PARAGRAPH.text         = NULL;
     PARAGRAPH.current_ptr  = (PAIR){ parent.box_ptr.x0, parent.box_ptr.y0 };
     PARAGRAPH.max_position = (PAIR){ parent.size.x1 - 1, parent.size.y1 - 1 };
     PARAGRAPH.parent_size  = parent.size;
     PARAGRAPH.settings     = parent.settings;
-    PARAGRAPH.lMARGIN = 2;
+    PARAGRAPH.lMARGIN      = 2;
+    atexit(free_paragraph);
 }
 
 
@@ -236,26 +243,70 @@ void __LOGPRINT(char* msg, int n)
 }
 
 
+// scroll: at what line to start
+// -  0: first line
+// - -1: (lines - box\_size) or 0  -- JUST THIS OPTION DONE
+// [Scroll text at new entry]
+// - >0: start at line 'scroll'
+void write_paragraph(int scroll)
+{
+    int start_line;
+    if(scroll < 0)
+    {
+        start_line =
+        PARAGRAPH.lines - PARAGRAPH.parent_size.y1 + PARAGRAPH.parent_size.y0 + 1;
+        PARAGRAPH.current_ptr.y = PARAGRAPH.parent_size.y0 + 1;
+        start_line              = (start_line > 0) ? start_line : 0;
+        for(int i = start_line; i < PARAGRAPH.lines; i++)
+        {
+            cursor_goto(PARAGRAPH.parent_size.x0 + PARAGRAPH.lMARGIN,
+            PARAGRAPH.current_ptr.y);
+            apply_color(PARAGRAPH.settings.color.text);
+            PARAGRAPH.current_ptr.y++;
+            wprintf(L"%s", PARAGRAPH.text + PARAGRAPH.line_length * i);
+            //__LOGPRINT(text, __LINE__);
+            reset_color(); // ya tiene fflush por lo que no se lo meto al wprintf
+        }
+    }
+    else
+    {
+        // TODO
+    }
+}
+
+
 // for now text cannot exceed line length
 void appendnl_text(char* text)
 {
-        //__LOGPRINT("-- APPEND NL --", __LINE__);
+    //__LOGPRINT("-- APPEND NL --", __LINE__);
     if(strlen(text) >= PARAGRAPH.line_length)
     {
-        //__LOGPRINT("LINE TOO LONG", __LINE__);
+        __LOGPRINT("LINE TOO LONG", __LINE__);
         return; // text is too large
     }
+    PARAGRAPH.lines++;
+    char* temp =
+    realloc(PARAGRAPH.text, sizeof(char) * PARAGRAPH.line_length * PARAGRAPH.lines);
+    PARAGRAPH.text = (temp != NULL) ? temp : PARAGRAPH.text;
+    if(temp == NULL)
+    {
+        __LOGPRINT("Cannot allocate more text", __LINE__ - 3);
+        return;
+    }
+    strcpy(PARAGRAPH.text + (PARAGRAPH.lines - 1) * PARAGRAPH.line_length, text);
     if(PARAGRAPH.current_ptr.y <= PARAGRAPH.max_position.y) // not at last line
     {
-        cursor_goto(PARAGRAPH.parent_size.x0 + PARAGRAPH.lMARGIN, PARAGRAPH.current_ptr.y);
+        cursor_goto(
+        PARAGRAPH.parent_size.x0 + PARAGRAPH.lMARGIN, PARAGRAPH.current_ptr.y);
         apply_color(PARAGRAPH.settings.color.text);
         PARAGRAPH.current_ptr.y++;
         wprintf(L"%s", text);
         //__LOGPRINT(text, __LINE__);
         reset_color(); // ya tiene fflush por lo que no se lo meto al wprintf
     }
-    else
+    else // cursor at last line
     {
+        write_paragraph(-1);
         //__LOGPRINT("AT LAST LINE", __LINE__);
     }
 }
