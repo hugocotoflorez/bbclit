@@ -231,3 +231,17 @@ void draw_box(BOX* box, struct SCREEN* screen)
     }
     draw_rutine(box->size, box->settings, screen);
 }
+
+
+void clear_box(BOX box)
+{
+    reset_color();
+    for(int y = box.size.y0 + 1; y < box.size.y1; y++)
+    {
+        cursor_goto(box.size.x0+1, y);
+        for(int x = box.size.x0 + 1; x < box.size.x1 - 1; x++)
+        {
+            putwchar(L' ');
+        }
+    }
+}

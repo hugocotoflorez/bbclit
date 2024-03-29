@@ -1,4 +1,5 @@
 #include "bbclit.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -132,7 +133,6 @@ void execute()
     // BINDED FUNCTION
     // can be use as a trigger
     ACTIVE_WINDOW.trigger(ACTIVE_WINDOW.current_ptr.y0);
-    fflush(OUT_STREAM);
 }
 
 
@@ -212,6 +212,7 @@ struct __paragraph
     PAIR max_position;
     DIMENSION parent_size;
     int lMARGIN;
+    BOX parent;
     struct CUSTOMIZE_SETTINGS settings;
 } PARAGRAPH;
 
@@ -231,6 +232,7 @@ void initialize_paragraph(BOX parent)
     PARAGRAPH.parent_size  = parent.size;
     PARAGRAPH.settings     = parent.settings;
     PARAGRAPH.lMARGIN      = 2;
+    PARAGRAPH.parent = parent;
     atexit(free_paragraph);
 }
 
@@ -250,6 +252,7 @@ void __LOGPRINT(char* msg, int n)
 // - >0: start at line 'scroll'
 void write_paragraph(int scroll)
 {
+    clear_box(PARAGRAPH.parent);
     int start_line;
     if(scroll < 0)
     {
@@ -281,7 +284,7 @@ void appendnl_text(char* text)
     //__LOGPRINT("-- APPEND NL --", __LINE__);
     if(strlen(text) >= PARAGRAPH.line_length)
     {
-        __LOGPRINT("LINE TOO LONG", __LINE__);
+        //__LOGPRINT("LINE TOO LONG", __LINE__);
         return; // text is too large
     }
     PARAGRAPH.lines++;
@@ -290,7 +293,7 @@ void appendnl_text(char* text)
     PARAGRAPH.text = (temp != NULL) ? temp : PARAGRAPH.text;
     if(temp == NULL)
     {
-        __LOGPRINT("Cannot allocate more text", __LINE__ - 3);
+        //__LOGPRINT("Cannot allocate more text", __LINE__ - 3);
         return;
     }
     strcpy(PARAGRAPH.text + (PARAGRAPH.lines - 1) * PARAGRAPH.line_length, text);
@@ -309,4 +312,24 @@ void appendnl_text(char* text)
         write_paragraph(-1);
         //__LOGPRINT("AT LAST LINE", __LINE__);
     }
+}
+
+/*
+ * ---------- INPUT BOX ----------
+ */
+
+void get_input(BOX parent, char* buffer, int length, bool* cancellation_signal)
+{
+    clear_box(parent);
+    //fflush(OUT_STREAM);
+    //__LOGPRINT("Into get_input", __LINE__);
+    cursor_goto(parent.box_ptr.x0, parent.box_ptr.y0);
+    *cancellation_signal = true;
+    show_cursor();
+    //__LOGPRINT("Start input_string", __LINE__);
+    input_string(OUT_STREAM, buffer, length, parent.size.x1 - parent.size.x0-2);
+    //__LOGPRINT("Out input_string with:", __LINE__);
+    //__LOGPRINT(buffer, __LINE__);
+    hide_cursor();
+    *cancellation_signal = false;
 }

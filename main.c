@@ -6,28 +6,29 @@
 #include "bbclit.h"
 #include <stdbool.h>
 
-void __LOG_PRINT(char* msg, int n)
-{
-    FILE* f = fopen("log.txt", "a");
-    fprintf(f, "[%s] (%d):\t%s\n", __TIME__, n, msg);
-    fclose(f);
-}
+BOX split1, split2, split3;
+bool isignal = false;
+
+
 
 void trigger(int n)
 {
     switch(n)
     {
         case 1:
-            //__LOG_PRINT("-- trigger -- 1", __LINE__);
+            __LOGPRINT("-- trigger -- 1", __LINE__);
             appendnl_text("Entry 1 selected");
             break;
         case 2:
-            //__LOG_PRINT("-- trigger -- 2", __LINE__);
+            __LOGPRINT("-- trigger -- 2", __LINE__);
             appendnl_text("Entry 2 selected");
             break;
         default:
-            //__LOG_PRINT("-- trigger -- n", __LINE__);
-            appendnl_text("Some entry selected");
+            __LOGPRINT("-- trigger -- n", __LINE__);
+            appendnl_text("Getting text");
+            char str[MAX_LINE_LEN];
+            get_input(split3, str, MAX_LINE_LEN, &isignal);
+            appendnl_text(str);
             break;
     }
 }
@@ -47,7 +48,6 @@ int main(int argc, char** arcv)
      * I USE SIZE AS DEST IT CRASHES AND SOME PART OF THE SCREEN
      * STOPS WORKING.       TODO! FIX THAT SHIT
      */
-    BOX split1, split2, split3;
     template1(&split1, &split2, &split3);
 
     draw_box(&split1, &screen);
@@ -63,8 +63,7 @@ int main(int argc, char** arcv)
     add_entry(0, '4', "Entry 4");
     add_entry(0, '5', "Entry 5");
 
-    bool i = false;
-    keyboard_handler(i);
+    keyboard_handler(&isignal);
 
     clear_screen();
     show_cursor();

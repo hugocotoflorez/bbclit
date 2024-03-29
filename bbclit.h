@@ -131,10 +131,11 @@ extern void enable_wide_mode();
 extern void show_cursor();
 extern void hide_cursor();
 extern void cursor_goto(int x, int y);
+void clear_box(BOX box);
 // keyboard_handler.c
-extern void keyboard_handler(bool CANCELLATION_SIGNAL);
+extern void keyboard_handler(bool *CANCELLATION_SIGNAL);
 extern void initialize_keybinds();
-extern bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN);
+extern bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN, int MAX_OUTPUT_LEN);
 extern void bind(char key, void f(void));
 extern void delete_keybinds();
 // boxes.c
@@ -153,8 +154,12 @@ MODULE_OPTIONS DEFAULT_MODULE_OPTIONS();
 extern void initialize_paragraph(BOX parent);
 extern void appendnl_text(char* text);
 
+void get_input(BOX parent, char* buffer, int length, bool* cancellation_signal);
 // templates.c
 void template1(BOX* split1, BOX* split2, BOX* split3);
 
+void apply_color(COLOR_FORMAT(c));
+void reset_color();
 
+void __LOGPRINT(char* msg, int n); // delete this (DEBUG)
 #endif // !BCLI_H

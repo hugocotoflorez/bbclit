@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
@@ -28,6 +29,7 @@ typedef struct __BIND
 {
     void (*action)(void);
     char key;
+    bool active;
 } BIND;
 
 
@@ -60,14 +62,16 @@ void add(char key, void (*action)(void))
 
 void free_binds()
 {
-    free(KEYBINDS.binds);
+    if(KEYBINDS.binds)
+        free(KEYBINDS.binds);
 }
 
 
 void delete_keybinds()
 {
-    if(KEYBINDS.binds != NULL)
-        free(KEYBINDS.binds);
+    free_binds();
+    KEYBINDS.binds   = NULL;
+    KEYBINDS.binds_n = 0;
 }
 
 
@@ -96,7 +100,7 @@ void enableRawMode()
     raw.c_lflag &= ~(OPOST);
     raw.c_lflag |= (CS8);
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
-    // raw.c_cc[VTIME] = 0;
+    // raw.c_cc[VTIME] = 1;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
@@ -118,12 +122,29 @@ void execute_bind(char key)
     {
         if(KEYBINDS.binds[i].key == key)
         {
-            KEYBINDS.binds[i].action();
+            if(KEYBINDS.binds[i].active)
+                KEYBINDS.binds[i].action();
             return;
         }
     }
 }
 
+
+void set_binds_active()
+{
+    for(int i = 0; i < KEYBINDS.binds_n; i++)
+    {
+        KEYBINDS.binds[i].active = true;
+    }
+}
+
+void set_binds_inactive()
+{
+    for(int i = 0; i < KEYBINDS.binds_n; i++)
+    {
+        KEYBINDS.binds[i].active = false;
+    }
+}
 
 /**
  * bind
@@ -139,21 +160,32 @@ void bind(char key, void f(void))
         if(KEYBINDS.binds[i].key == key)
         {
             KEYBINDS.binds[i].action = f;
+            KEYBINDS.binds[i].active = true;
             return;
         }
     KEYBINDS.add(key, f);
 }
 
+bool IS_HANDLER_ACTIVE = false;
 
 /**
  * keyboard_handler
+ * binds are only active if keyboard_handler is running.
+ * this behaviour can be changed manually (not recommended)
  */
-void keyboard_handler(bool CANCELLATION_SIGNAL)
+void keyboard_handler(bool* CANCELLATION_SIGNAL)
 {
+    //__LOGPRINT("INTO KBDH", __LINE__);
+    if(IS_HANDLER_ACTIVE)
+    {
+        //__LOGPRINT("ERROR HANDLER ALREADY ACTIVE", __LINE__);
+        return;
+    }
+
     char c = 0;
-    //char s[30]; // IDK WHAT THE FUCK HAPPENED BUT WITHOUT THIS
-                // DECLARATION IT EXPLOTES AND execute_bind DONT
-                // EXECUTES enter KEYPRESSES
+    // char s[30]; // IDK WHAT THE FUCK HAPPENED BUT WITHOUT THIS
+    //  DECLARATION IT EXPLOTES AND execute_bind DONT
+    //  EXECUTES enter KEYPRESSES
     /*
      * Looks like moving o from int to ssize_t fixed the problem
      * I think that some overflow in o writes c and because of this
@@ -163,10 +195,18 @@ void keyboard_handler(bool CANCELLATION_SIGNAL)
      */
     ssize_t o;
     enableRawMode();
-    while((o = read(STDIN_FILENO, &c, 1)) >= 0 && c != EXIT_POINT && !CANCELLATION_SIGNAL)
+    set_binds_active();
+    while((o = read(STDIN_FILENO, &c, 1)) >= 0 && c != EXIT_POINT)
     {
+        if(*CANCELLATION_SIGNAL)
+        {
+            //__LOGPRINT("Exiting khandler", __LINE__);
+            break;
+        }
         if(o == 0) // si no hay input
+        {
             mssleep(100);
+        }
         else
         {
             // sprintf(s, "character (%d) pressed", c);
@@ -176,6 +216,8 @@ void keyboard_handler(bool CANCELLATION_SIGNAL)
         }
     }
     disableRawMode();
+    set_binds_inactive();
+    IS_HANDLER_ACTIVE = false;
 }
 
 
@@ -191,8 +233,41 @@ void keyboard_handler(bool CANCELLATION_SIGNAL)
  *
  * ! Entry in cooked mode and dont come back raw
  */
-bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN)
+bool input_string(FILE* IN_STREAM, char* OUT_STR, int MAX_LEN, int MAX_OUTPUT_LEN)
 {
-    disableRawMode();
-    return fgets(OUT_STR, MAX_LEN, IN_STREAM) == NULL;
+    char c;
+    ssize_t o;
+    char s[40];
+    for(int i = 0; i < MAX_LEN; i++)
+        if((o = read(STDIN_FILENO, &c, 1)) >= 0)
+        {
+            if(o == 0) // si no hay input
+            {
+                mssleep(100);
+                i--;
+                continue;
+            }
+            if(c == 13)
+            {
+                sprintf(s, "\\0 into s[%d]", i);
+                __LOGPRINT(s, __LINE__);
+                OUT_STR[i] = '\0';
+                break;
+            }
+            if(i < MAX_OUTPUT_LEN)
+            {
+                putwchar(c);
+                fflush(OUT_STREAM);
+            }
+            OUT_STR[i] = c;
+            c          = 0;
+            sprintf(s, "Insert %c(%d) into s[%d]", c, c, i);
+            __LOGPRINT(s, __LINE__);
+        }
+        else
+            return false;
+
+    __LOGPRINT(OUT_STR, __LINE__);
+
+    return true;
 }
